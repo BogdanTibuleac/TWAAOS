@@ -1,4 +1,4 @@
-## Swagger Screenshots
+## LAB2 Swagger Screenshots
 
 ### Overview of all endpoints
 Displays all available routes (GET, POST, PUT, DELETE) exposed by the API.
