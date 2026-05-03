@@ -1,4 +1,4 @@
-# Task Manager Application
+# Laborator #04: Interfață web pentru gestionarul de sarcini
 
 This is a full-stack Task Manager application with separate backend and frontend components.
 
