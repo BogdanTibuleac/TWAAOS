@@ -1,14 +1,18 @@
 import jwt
+import os
 import sqlite3
 from datetime import datetime, timedelta, timezone
+from dotenv import load_dotenv
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from database import get_db
 
-SECRET_KEY = "change-this-in-production"
-ALGORITHM = "HS256"
-TOKEN_EXPIRE_MINUTES = 30
+load_dotenv()
+
+SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key-change-before-production")
+ALGORITHM = os.environ.get("ALGORITHM", "HS256")
+TOKEN_EXPIRE_MINUTES = int(os.environ.get("EXPIRARE_TOKEN_MINUTE", "30"))
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="autentificare")

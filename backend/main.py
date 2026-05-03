@@ -4,7 +4,6 @@ import sqlite3
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
 
@@ -34,45 +33,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-if (FRONTEND_DIR / "images").exists():
-    app.mount(
-        "/images",
-        StaticFiles(directory=FRONTEND_DIR / "images"),
-        name="images",
-    )
-
-
-@app.get("/")
-def serve_frontend():
-    """Serve the single-page frontend from the backend."""
-    index_file = FRONTEND_DIR / "index.html"
-    if not index_file.exists():
-        raise HTTPException(status_code=404, detail="Frontend not found")
-    return FileResponse(index_file)
-
-
-@app.get("/styles.css")
-def serve_styles():
-    """Serve frontend styles for the single-page app."""
-    styles_file = FRONTEND_DIR / "styles.css"
-    if not styles_file.exists():
-        raise HTTPException(status_code=404, detail="Stylesheet not found")
-    return FileResponse(styles_file)
-
-
-@app.get("/app.js")
-def serve_app_script():
-    """Serve frontend JavaScript for the single-page app."""
-    script_file = FRONTEND_DIR / "app.js"
-    if not script_file.exists():
-        raise HTTPException(status_code=404, detail="Script not found")
-    return FileResponse(script_file)
-
-
 @app.get("/api/status")
 def root():
     """Basic service status endpoint."""
     return {"status": "active"}
+
+
+@app.get("/healthz")
+def healthz():
+    """Health check endpoint for deployment platforms."""
+    return {"status": "ok"}
 
 
 @app.get("/health/db")
@@ -313,3 +283,7 @@ def sterge_sarcina(
         raise HTTPException(status_code=500, detail="Database error") from exc
 
     return {"message": f"Task {task_id} deleted successfully"}
+
+
+# Keep this mount last so API routes are matched before static files.
+app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

@@ -1,6 +1,4 @@
-const API = (window.location.protocol === "file:" || window.location.port !== "8000")
-    ? "http://localhost:8000"
-    : "";
+const API = "";
 
 const elements = {
     authSection: document.getElementById("sectiune-auth"),

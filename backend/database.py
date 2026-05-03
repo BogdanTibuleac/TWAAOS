@@ -1,12 +1,23 @@
+import os
 import sqlite3
 from pathlib import Path
 
-DATABASE = Path(__file__).with_name("tasks.db")
+from dotenv import load_dotenv
+
+load_dotenv()
+
+BASE_DIR = Path(__file__).resolve().parent
+configured_database_path = Path(os.environ.get("DATABASE_PATH", "tasks.db"))
+DATABASE_PATH = (
+    configured_database_path
+    if configured_database_path.is_absolute()
+    else BASE_DIR / configured_database_path
+)
 
 
 def initialize_db():
     """Initializes the database and creates required tables if they do not exist."""
-    conn = sqlite3.connect(DATABASE)
+    conn = sqlite3.connect(DATABASE_PATH)
     conn.execute(
         """
         CREATE TABLE IF NOT EXISTS users (
@@ -34,7 +45,7 @@ def initialize_db():
 
 def get_db():
     """Yields a SQLite database connection with foreign key support enabled."""
-    conn = sqlite3.connect(DATABASE, check_same_thread=False)
+    conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     try:
         conn.execute("PRAGMA foreign_keys = ON")
